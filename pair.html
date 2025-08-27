@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ADEEL-MD Pair</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f172a;
+      --panel-2:#111827;
+      --text:#e6f1ff;
+      --muted:#94a3b8;
+      --accent:#00e5ff;
+      --accent-2:#7f5af0;
+      --border:#1f2937;
+      --success:#10b981;
+      --danger:#ef4444;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #0e1625 0%, var(--bg) 60%);
+      color: var(--text);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:40px 20px;
+      gap:24px;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(24px, 3vw, 36px);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      text-shadow: 0 0 18px rgba(0,229,255,.25);
+    }
+    input{
+      width:min(560px, 92vw);
+      padding:14px 16px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      outline:none;
+      transition: box-shadow .2s, border-color .2s, transform .05s;
+      font-size:16px;
+    }
+    input::placeholder{ color: var(--muted); }
+    input:focus{
+      border-color: var(--accent);
+      box-shadow: 0 0 0 6px rgba(0,229,255,.12), 0 0 32px rgba(127,90,240,.2) inset;
+    }
+    button{
+      margin-top:8px;
+      padding:12px 18px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, #0f1b2e, var(--panel-2));
+      color: var(--text);
+      cursor:pointer;
+      font-weight:600;
+      letter-spacing:.04em;
+      transition: transform .05s ease, box-shadow .2s ease, border-color .2s ease;
+      box-shadow: 0 6px 18px rgba(0,0,0,.35), 0 0 10px rgba(0,229,255,.08);
+    }
+    button:hover{
+      border-color: var(--accent);
+      box-shadow: 0 10px 24px rgba(0,0,0,.45), 0 0 22px rgba(0,229,255,.18);
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+    .output{
+      display:none;
+      margin-top: 20px;
+      background: var(--panel-2);
+      padding: 20px;
+      border-radius: 14px;
+      max-width: min(560px, 92vw);
+      width:100%;
+      word-break: break-all;
+      border: 1px solid var(--border);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02), 0 0 28px rgba(127,90,240,.12);
+    }
+    .chip{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.15em;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: #0a1322;
+      box-shadow: 0 0 0 3px rgba(0,229,255,.06);
+    }
+
+</style>
+</head>
+<body>
+
+  <h1>ADEEL-MD Pairing</h1>
+  <div class="chip">JARVIS ONLINE</div>
+
+  <input type="text" id="number" placeholder="Enter WhatsApp Number (e.g., 923390809008)" />
+  <button onclick="getCode()">Generate Pair Code</button>
+
+  <div id="result" class="output" style="display:none;"></div>
+
+  <script>
+    async function getCode() {
+      const number = document.getElementById("number").value.trim();
+      const resultBox = document.getElementById("result");
+
+      if (!number) {
+        alert("Please enter a valid number.");
+        return;
+      }
+
+      resultBox.style.display = 'block';
+      resultBox.textContent = "⏳ Generating code, please wait...";
+
+      try {
+        const res = await fetch(`/code?number=${encodeURIComponent(number)}`);
+        const data = await res.json();
+
+        if (data.code) {
+          resultBox.textContent = `✅ Pairing Code: ${data.code}`;
+        } else if (data.error) {
+          resultBox.textContent = `❌ Error: ${data.error}`;
+        } else {
+          resultBox.textContent = "⚠️ Unknown response received.";
+        }
+      } catch (err) {
+        resultBox.textContent = `❌ Failed to get code: ${err.message}`;
+      }
+    }
+  </script>
+
+</body>
+</html>
